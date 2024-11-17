@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Полоска здоровья</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #333;
+            font-family: Arial, sans-serif;
+        }
+        .health-bar {
+            width: 100%;
+            max-width: 400px;
+            height: 30px;
+            background-color: #666;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        .health-fill {
+            height: 100%;
+            background-color: #e74c3c;
+            width: 100%; /* Изначально 100% */
+            transition: width 0.5s ease;
+        }
+        .time-display {
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="health-bar">
+    <div class="health-fill" id="health-fill"></div>
+    <div class="time-display" id="time-display"></div>
+</div>
+
+<script>
+    // Случайное текущее время для тестирования
+    function getRandomTime() {
+        const randomHour = Math.floor(Math.random() * 20); // 0-19
+        const randomMinute = Math.floor(Math.random() * 60); // 0-59
+        return new Date(2024, 0, 1, randomHour, randomMinute); // Поставим фиксированную дату
+    }
+
+    function updateHealthBar() {
+        // Симуляция получения текущего времени
+        const now = getRandomTime(); // Заменяем реальное время на случайное
+        
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+        const totalMinutes = currentHour * 60 + currentMinute;
+        const minutesToEndOfDay = (19 * 60); // 19:00
+
+        // Рассчитываем оставшееся время в % от 100%
+        const percentage = Math.max(0, ((minutesToEndOfDay - totalMinutes) / minutesToEndOfDay) * 100);
+        
+        // Обновляем ширину полоски здоровья
+        document.getElementById('health-fill').style.width = percentage + '%';
+
+        // Обновляем отображение времени
+        document.getElementById('time-display').innerText = now.toLocaleTimeString();
+    }
+    
+    // Обновляем полоску каждые 10 минут (600000 мс)
+    updateHealthBar();
+    setInterval(updateHealthBar, 600000); // Каждые 10 минут
+</script>
+
+</body>
+</html>
