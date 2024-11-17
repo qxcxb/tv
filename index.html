@@ -51,11 +51,22 @@
         const now = new Date();
         const currentHour = now.getHours();
         const currentMinute = now.getMinutes();
-        const totalMinutes = currentHour * 60 + currentMinute;
-        const minutesToEndOfDay = (19 * 60); // 19:00
+        
+        // Рассчитываем текущее время в минутах
+        const totalMinutes = currentHour * 60 + currentMinute; // Текущее время в минутах
+        const endOfDayMinutes = 19 * 60; // 19:00 в минутах
+        const startOfDayMinutes = 0; // 00:00 в минутах
 
-        // Рассчитываем оставшееся время в % от 100%
-        const percentage = Math.max(0, ((minutesToEndOfDay - totalMinutes) / minutesToEndOfDay) * 100);
+        // Условие: если текущее время после 19:00, то 0%
+        let percentage;
+        if (totalMinutes >= endOfDayMinutes) {
+            percentage = 0;
+        } else if (totalMinutes < startOfDayMinutes) {
+            percentage = 100; // Если до 00:00, полоска будет полностью заполнена
+        } else {
+            // Если текущее время между 00:00 и 19:00
+            percentage = ((endOfDayMinutes - totalMinutes) / (endOfDayMinutes - startOfDayMinutes)) * 100;
+        }
         
         // Обновляем ширину полоски здоровья
         document.getElementById('health-fill').style.width = percentage + '%';
@@ -64,9 +75,10 @@
         document.getElementById('time-display').innerText = now.toLocaleTimeString();
     }
     
-    // Обновляем полоску каждую секунду
+    // Обновляем полоску при загрузке
     updateHealthBar();
-    setInterval(updateHealthBar, 1000);
+    // Обновляем полоску каждые 60 секунд
+    setInterval(updateHealthBar, 60000);
 </script>
 
 </body>
