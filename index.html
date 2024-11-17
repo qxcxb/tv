@@ -49,42 +49,28 @@
 <script>
     function updateHealthBar() {
         const now = new Date();
-        const currentHour = now.getHours();
-        const currentMinute = now.getMinutes();
-        const totalMinutes = currentHour * 60 + currentMinute;
-        const minutesToEndOfDay = (19 * 60); // 19:00
-
-        // Проверяем, остались ли у нас сохраненные данные
-        let remainingMinutes = localStorage.getItem('remainingMinutes');
+        const endTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 19, 0, 0); // 19:00 сегодня
         
-        if (remainingMinutes === null) {
-            // Если нет данных, инициализируем с максимальным значением
-            remainingMinutes = minutesToEndOfDay - totalMinutes;
-            localStorage.setItem('remainingMinutes', remainingMinutes);
-        } else {
-            // Если данные есть, обновляем их
-            remainingMinutes = Math.max(0, remainingMinutes - 1); // Уменьшаем оставшиеся минуты
-            localStorage.setItem('remainingMinutes', remainingMinutes);
+        if (now > endTime) {
+            // Если текущее время уже больше 19:00, установим конец на следующий день
+            endTime.setDate(endTime.getDate() + 1);
         }
 
-        // Рассчитываем процент заполнения полоски
-        const percentage = Math.max(0, (remainingMinutes / (minutesToEndOfDay)) * 100);
+        const remainingTime = endTime - now; // Время до 19:00 в миллисекундах
+        const totalTimeUntil19 = 24 * 60 * 60 * 1000; // Полные сутки в миллисекундах
+
+        // Рассчитываем заполнение полоски в процентах
+        const percentage = Math.max(0, (remainingTime / totalTimeUntil19) * 100);
         
         // Обновляем ширину полоски здоровья
         document.getElementById('health-fill').style.width = percentage + '%';
 
         // Обновляем отображение времени
         document.getElementById('time-display').innerText = now.toLocaleTimeString();
-
-        // Если осталась 0 минут, сбрасываем значение
-        if (remainingMinutes <= 0) {
-            localStorage.removeItem('remainingMinutes');
-        }
     }
-
-    // Обновляем полоску каждые 60 секунд, начиная с обновления
+    
+    // Обновляем полоску при загрузке страницы
     updateHealthBar();
-    setInterval(updateHealthBar, 60000);
 </script>
 
 </body>
