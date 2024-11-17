@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -26,7 +26,7 @@
         .health-fill {
             height: 100%;
             background-color: #e74c3c;
-            width: 100%; /* Начальное значение, обновится с JavaScript */
+            width: 100%; /* Изначально 100% */
             transition: width 0.5s ease;
         }
         .time-display {
@@ -51,21 +51,27 @@
         const now = new Date();
         const currentHour = now.getHours();
         const currentMinute = now.getMinutes();
-        const totalMinutes = currentHour * 60 + currentMinute; // Текущее время в минутах
-        const endOfDay = 19 * 60; // 19:00 в минутах
-
-        // Расчет текущего времени заполнения в процентах
-        const percentage = Math.max(0, ((endOfDay - totalMinutes) / endOfDay) * 100);
         
-        // Обновляем ширину полоски здоровья
+        // Получаем текущее время в минутах
+        const totalMinutesNow = currentHour * 60 + currentMinute;
+        const totalMinutesAt19 = 19 * 60; // 19:00 в минутах
+
+        // Рассчитываем оставшиеся минуты до 19:00
+        const remainingMinutes = totalMinutesAt19 - totalMinutesNow;
+
+        // Рассчитываем процент заполнения полоски здоровья
+        const percentage = Math.max(0, (remainingMinutes / (totalMinutesAt19 - 0)) * 100);
+        
+        // Устанавливаем ширину полоски здоровья
         document.getElementById('health-fill').style.width = percentage + '%';
 
         // Обновляем отображение времени
         document.getElementById('time-display').innerText = now.toLocaleTimeString();
     }
-
-    // Обновляем полоску сразу при загрузке и каждые 60 секунд
+    
+    // Первичное обновление
     updateHealthBar();
+    // Обновляем полоску каждые 60 секунд
     setInterval(updateHealthBar, 1000);
 </script>
 
