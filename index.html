@@ -54,36 +54,37 @@
         const totalMinutes = currentHour * 60 + currentMinute;
         const minutesToEndOfDay = (19 * 60); // 19:00
 
-        // Рассчитываем оставшееся время в % от 100%
-        const percentage = Math.max(0, ((minutesToEndOfDay - totalMinutes) / minutesToEndOfDay) * 100);
+        // Проверяем, остались ли у нас сохраненные данные
+        let remainingMinutes = localStorage.getItem('remainingMinutes');
         
-        // Сохраняем текущее состояние полоски в localStorage
-        localStorage.setItem('healthPercentage', percentage);
+        if (remainingMinutes === null) {
+            // Если нет данных, инициализируем с максимальным значением
+            remainingMinutes = minutesToEndOfDay - totalMinutes;
+            localStorage.setItem('remainingMinutes', remainingMinutes);
+        } else {
+            // Если данные есть, обновляем их
+            remainingMinutes = Math.max(0, remainingMinutes - 1); // Уменьшаем оставшиеся минуты
+            localStorage.setItem('remainingMinutes', remainingMinutes);
+        }
 
+        // Рассчитываем процент заполнения полоски
+        const percentage = Math.max(0, (remainingMinutes / (minutesToEndOfDay)) * 100);
+        
         // Обновляем ширину полоски здоровья
         document.getElementById('health-fill').style.width = percentage + '%';
 
         // Обновляем отображение времени
-        const formattedTime = now.toLocaleTimeString();
-        document.getElementById('time-display').innerText = formattedTime;
-    }
+        document.getElementById('time-display').innerText = now.toLocaleTimeString();
 
-    function restoreHealthBar() {
-        const savedPercentage = localStorage.getItem('healthPercentage');
-
-        if (savedPercentage !== null) {
-            // Если сохраненное значение существует, устанавливаем его
-            document.getElementById('health-fill').style.width = savedPercentage + '%';
-        } else {
-            // Изначально устанавливаем 100%, если нет сохраненного значения
-            document.getElementById('health-fill').style.width = '100%';
+        // Если осталась 0 минут, сбрасываем значение
+        if (remainingMinutes <= 0) {
+            localStorage.removeItem('remainingMinutes');
         }
     }
 
-    // Восстанавливаем полоску и обновляем каждые 60 секунд
-    restoreHealthBar();
+    // Обновляем полоску каждые 60 секунд, начиная с обновления
     updateHealthBar();
-    setInterval(updateHealthBar, 1000);
+    setInterval(updateHealthBar, 60000);
 </script>
 
 </body>
