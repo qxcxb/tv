@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -26,7 +26,7 @@
         .health-fill {
             height: 100%;
             background-color: #e74c3c;
-            width: 0%; /* Изначально 0% */
+            width: 100%; /* Начальное значение, обновится с JavaScript */
             transition: width 0.5s ease;
         }
         .time-display {
@@ -51,22 +51,11 @@
         const now = new Date();
         const currentHour = now.getHours();
         const currentMinute = now.getMinutes();
-        
-        // Рассчитываем текущее время в минутах
         const totalMinutes = currentHour * 60 + currentMinute; // Текущее время в минутах
-        const endOfDayMinutes = 19 * 60; // 19:00 в минутах
-        const startOfDayMinutes = 0; // 00:00 в минутах
+        const endOfDay = 19 * 60; // 19:00 в минутах
 
-        // Условие: если текущее время после 19:00, то 0%
-        let percentage;
-        if (totalMinutes >= endOfDayMinutes) {
-            percentage = 0;
-        } else if (totalMinutes < startOfDayMinutes) {
-            percentage = 100; // Если до 00:00, полоска будет полностью заполнена
-        } else {
-            // Если текущее время между 00:00 и 19:00
-            percentage = ((endOfDayMinutes - totalMinutes) / (endOfDayMinutes - startOfDayMinutes)) * 100;
-        }
+        // Расчет текущего времени заполнения в процентах
+        const percentage = Math.max(0, ((endOfDay - totalMinutes) / endOfDay) * 100);
         
         // Обновляем ширину полоски здоровья
         document.getElementById('health-fill').style.width = percentage + '%';
@@ -74,11 +63,10 @@
         // Обновляем отображение времени
         document.getElementById('time-display').innerText = now.toLocaleTimeString();
     }
-    
-    // Обновляем полоску при загрузке
+
+    // Обновляем полоску сразу при загрузке и каждые 60 секунд
     updateHealthBar();
-    // Обновляем полоску каждые 60 секунд
-    setInterval(updateHealthBar, 60000);
+    setInterval(updateHealthBar, 1000);
 </script>
 
 </body>
