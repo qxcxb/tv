@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Полоска времени до 19:00</title>
+    <title>Полоска здоровья</title>
     <style>
         body {
             display: flex;
@@ -26,7 +26,7 @@
         .health-fill {
             height: 100%;
             background-color: #e74c3c;
-            width: 100%; /* Изначально 100% */
+            width: 100%; /* Изначально 100% (полная шкала) */
             transition: width 0.5s ease;
         }
         .time-display {
@@ -49,11 +49,15 @@
 <script>
     function updateHealthBar() {
         const now = new Date();
-        const currentTime = now.getHours() * 60 + now.getMinutes(); // Текущее время в минутах
-        const endTime = 19 * 60; // 19:00 в минутах (1140)
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
         
-        // Если текущее время больше 19:00, устанавливаем 0%
-        const percentage = currentTime >= endTime ? 0 : ((endTime - currentTime) / (endTime - (0))) * 100;
+        // Если текущее время позже 19:00, то устанавливаем нулевое значение
+        const minutesTo19 = (19 * 60); // 19:00 в минутах
+        const currentMinutes = (currentHour * 60) + currentMinute;
+
+        // Если текущее время больше или равно 19:00, полоска будет 0%
+        let percentage = currentMinutes < minutesTo19 ? ((minutesTo19 - currentMinutes) / minutesTo19) * 100 : 0;
 
         // Обновляем ширину полоски здоровья
         document.getElementById('health-fill').style.width = percentage + '%';
