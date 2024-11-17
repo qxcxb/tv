@@ -26,7 +26,7 @@
         .health-fill {
             height: 100%;
             background-color: #e74c3c;
-            width: 100%; /* Изначально 100% */
+            width: 100%; /* Изначально 0% */
             transition: width 0.5s ease;
         }
         .time-display {
@@ -52,11 +52,17 @@
         const currentHour = now.getHours();
         const currentMinute = now.getMinutes();
         const totalMinutes = currentHour * 60 + currentMinute;
-        const minutesToEndOfDay = (19 * 60); // 19:00
 
-        // Рассчитываем оставшееся время в % от 100%
-        const percentage = Math.max(0, ((minutesToEndOfDay - totalMinutes) / minutesToEndOfDay) * 100);
+        // Устанавливаем общее количество минут до 19:00
+        const minutesToEndOfDay = (19 * 60); // 19:00
+        const totalDayMinutes = 24 * 60; // Общее количество минут в дне
         
+        // Теперь вычисляем оставшееся время до 19:00
+        const remainingMinutes = Math.max(0, minutesToEndOfDay - totalMinutes);
+
+        // Рассчитываем процент заполнения
+        const percentage = (remainingMinutes / minutesToEndOfDay) * 100;
+
         // Обновляем ширину полоски здоровья
         document.getElementById('health-fill').style.width = percentage + '%';
 
