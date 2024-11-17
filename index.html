@@ -26,7 +26,7 @@
         .health-fill {
             height: 100%;
             background-color: #e74c3c;
-            width: 100%; /* Изначально 100% */
+            width: 0%; /* Изначально 0% */
             transition: width 0.5s ease;
         }
         .time-display {
@@ -49,18 +49,13 @@
 <script>
     function updateHealthBar() {
         const now = new Date();
-        const endTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 19, 0, 0); // 19:00 сегодня
-        
-        if (now > endTime) {
-            // Если текущее время уже больше 19:00, установим конец на следующий день
-            endTime.setDate(endTime.getDate() + 1);
-        }
+        const currentHour = now.getHours();
+        const currentMinute = now.getMinutes();
+        const totalMinutes = currentHour * 60 + currentMinute;
+        const minutesToEndOfDay = (19 * 60); // 19:00
 
-        const remainingTime = endTime - now; // Время до 19:00 в миллисекундах
-        const totalTimeUntil19 = 24 * 60 * 60 * 1000; // Полные сутки в миллисекундах
-
-        // Рассчитываем заполнение полоски в процентах
-        const percentage = Math.max(0, (remainingTime / totalTimeUntil19) * 100);
+        // Рассчитываем оставшееся время в % от 100%
+        const percentage = Math.max(0, ((minutesToEndOfDay - totalMinutes) / minutesToEndOfDay) * 100);
         
         // Обновляем ширину полоски здоровья
         document.getElementById('health-fill').style.width = percentage + '%';
@@ -69,8 +64,9 @@
         document.getElementById('time-display').innerText = now.toLocaleTimeString();
     }
     
-    // Обновляем полоску при загрузке страницы
+    // Обновляем полоску каждую секунду
     updateHealthBar();
+    setInterval(updateHealthBar, 1000);
 </script>
 
 </body>
