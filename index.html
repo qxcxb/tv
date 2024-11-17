@@ -51,22 +51,38 @@
         const now = new Date();
         const currentHour = now.getHours();
         const currentMinute = now.getMinutes();
-        const currentSecond = now.getSeconds();
         const totalMinutes = currentHour * 60 + currentMinute;
         const minutesToEndOfDay = (19 * 60); // 19:00
 
         // Рассчитываем оставшееся время в % от 100%
         const percentage = Math.max(0, ((minutesToEndOfDay - totalMinutes) / minutesToEndOfDay) * 100);
         
+        // Сохраняем текущее состояние полоски в localStorage
+        localStorage.setItem('healthPercentage', percentage);
+
         // Обновляем ширину полоски здоровья
         document.getElementById('health-fill').style.width = percentage + '%';
 
         // Обновляем отображение времени
-        document.getElementById('time-display').innerText = now.toLocaleTimeString();
+        const formattedTime = now.toLocaleTimeString();
+        document.getElementById('time-display').innerText = formattedTime;
     }
-    
-    // Обновляем полоску каждую секунду
-    updateHealthBar();  // Первоначальный вызов, чтобы установить начальное значение
+
+    function restoreHealthBar() {
+        const savedPercentage = localStorage.getItem('healthPercentage');
+
+        if (savedPercentage !== null) {
+            // Если сохраненное значение существует, устанавливаем его
+            document.getElementById('health-fill').style.width = savedPercentage + '%';
+        } else {
+            // Изначально устанавливаем 100%, если нет сохраненного значения
+            document.getElementById('health-fill').style.width = '100%';
+        }
+    }
+
+    // Восстанавливаем полоску и обновляем каждые 60 секунд
+    restoreHealthBar();
+    updateHealthBar();
     setInterval(updateHealthBar, 1000);
 </script>
 
