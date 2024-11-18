@@ -43,7 +43,7 @@
 
 <div class="health-bar">
     <div class="health-fill" id="health-fill"></div>
-    <div class="time-display" id="time-display"></div>
+    <div class="time-display" id="time-display">0:00</div>
 </div>
 
 <script>
@@ -51,7 +51,6 @@
         const now = new Date();
         const currentHour = now.getHours();
         const currentMinute = now.getMinutes();
-        const totalMinutes = currentHour * 60 + currentMinute; // текущее время в минутах
         
         const minutesToEndOfDay = (19 * 60); // 19:00 в минутах
         const minutesSinceMidnight = (currentHour * 60) + currentMinute; // общее время с начала дня в минутах
@@ -59,25 +58,28 @@
         // Если уже после 19:00, то ставим 100%
         if (minutesSinceMidnight >= minutesToEndOfDay) {
             document.getElementById('health-fill').style.width = '100%';
+            document.getElementById('time-display').innerText = "0:00";
         } else {
             // Остаток времени до 19:00
             const remainingMinutes = minutesToEndOfDay - minutesSinceMidnight;
-            
-            // Рассчитываем, сколько времени прошло с начала отсчета (текущее время)
-            const progressPercentage = Math.max(0, (1 - (remainingMinutes / (minutesToEndOfDay - totalMinutes))) * 100);
-            
+            const remainingHours = Math.floor(remainingMinutes / 60);
+            const remainingMins = remainingMinutes % 60;
+
+            // Обновляем отображение оставшегося времени
+            document.getElementById('time-display').innerText = `${remainingHours}:${remainingMins.toString().padStart(2, '0')}`;
+
+            // Рассчитываем процент здоровья
+            const progressPercentage = (1 - (remainingMinutes / (minutesToEndOfDay))) * 100;
+
             // Обновляем ширину полоски здоровья
             document.getElementById('health-fill').style.width = progressPercentage + '%';
         }
-
-        // Обновляем отображение времени
-        document.getElementById('time-display').innerText = now.toLocaleTimeString();
     }
     
     // Немедленная инициализация при загрузке страницы
     updateHealthBar();
     // Обновляем полоску каждые 60 секунд
-    setInterval(updateHealthBar, 1000);
+    setInterval(updateHealthBar, 60000);
 </script>
 
 </body>
