@@ -51,23 +51,24 @@
         const currentHour = now.getHours(); // Часы
         const currentMinute = now.getMinutes(); // Минуты
         const totalMinutes = currentHour * 60 + currentMinute; // Общее количество минут с начала дня до текущего времени
-        
-        const minutesToEndOfDay = (8 * 60); // Общее количество минут до 19:00
-        
-        if (totalMinutes >= minutesToEndOfDay) {
-            // Если время уже после 19:00, то устанавливаем 100%
+
+        const minutesToStart = (8 * 60); // 8:00 в минутах
+        const endOfDay = (24 * 60); // 24:00 в минутах
+
+        if (totalMinutes >= minutesToStart) {
+            // Если время уже 8:00 или позже, то устанавливаем 100%
             document.getElementById('health-fill').style.width = '100%';
         } else {
-            // Если все еще до 19:00, то рассчитываем остаток
-            const remainingMinutes = minutesToEndOfDay - totalMinutes; // Остаток времени до 19:00
-        
-            // Рассчитываем процент от (текущие минуты) до (19:00)
-            const progressPercentage = (1 - (remainingMinutes / (minutesToEndOfDay - totalMinutes))) * 100;
-            
+            // Если все еще до 8:00, считаем сколько осталось до 8:00
+            const remainingMinutes = minutesToStart - totalMinutes; // Остаток времени до 8:00
+            const totalTimeToReach = minutesToStart; // Всего минут до 8:00
+
+            // Рассчитываем процент от 0 до 100%
+            const progressPercentage = (1 - (remainingMinutes / totalTimeToReach)) * 100;
+
             // Устанавливаем ширину полоски здоровья в процентах
             document.getElementById('health-fill').style.width = progressPercentage + '%';
         }
-
 
         // Обновляем отображение времени
         document.getElementById('time-display').innerText = now.toLocaleTimeString();
