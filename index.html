@@ -52,7 +52,7 @@
         const currentMinute = now.getMinutes(); // Минуты
         const totalMinutes = currentHour * 60 + currentMinute; // Общее количество минут с начала дня до текущего времени
         
-        const minutesToEndOfDay = (19 * 60); // Общее количество минут до 19:00
+        const minutesToEndOfDay = (8 * 60); // Общее количество минут до 19:00
         
         if (totalMinutes >= minutesToEndOfDay) {
             // Если время уже после 19:00, то устанавливаем 100%
