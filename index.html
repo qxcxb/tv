@@ -26,7 +26,7 @@
         .health-fill {
             height: 100%;
             background-color: #e74c3c;
-            width: 100%; /* Изначально 0% */
+            width: 0%; /* Изначально 0% */
             transition: width 0.5s ease;
         }
         .time-display {
@@ -51,27 +51,23 @@
         const now = new Date();
         const currentHour = now.getHours();
         const currentMinute = now.getMinutes();
-        const totalMinutes = currentHour * 60 + currentMinute;
-
-        // Устанавливаем общее количество минут до 19:00
-        const minutesToEndOfDay = (19 * 60); // 19:00
-        const totalDayMinutes = 24 * 60; // Общее количество минут в дне
-
-        // Рассчитываем общее время (с 00:00) до 19:00
-        const minutesSinceStartOfDay = currentHour * 60 + currentMinute;
-
-        // Если прошло больше времени чем до 19:00, то устанавливаем 100%
-        if (minutesSinceStartOfDay >= minutesToEndOfDay) {
+        const totalMinutes = currentHour * 60 + currentMinute; // текущее время в минутах
+        
+        const minutesToEndOfDay = (19 * 60); // 19:00 в минутах
+        const minutesSinceMidnight = (currentHour * 60) + currentMinute; // общее время с начала дня в минутах
+        
+        // Если уже после 19:00, то ставим 100%
+        if (minutesSinceMidnight >= minutesToEndOfDay) {
             document.getElementById('health-fill').style.width = '100%';
         } else {
-            // Рассчитываем оставшееся время до 19:00
-            const remainingMinutes = minutesToEndOfDay - minutesSinceStartOfDay;
-
-            // Рассчитываем процент заполнения, начиная с текущего времени
-            const percentage = (1 - (remainingMinutes / minutesToEndOfDay)) * 100;
+            // Остаток времени до 19:00
+            const remainingMinutes = minutesToEndOfDay - minutesSinceMidnight;
+            
+            // Рассчитываем, сколько времени прошло с начала отсчета (текущее время)
+            const progressPercentage = Math.max(0, (1 - (remainingMinutes / (minutesToEndOfDay - totalMinutes))) * 100);
             
             // Обновляем ширину полоски здоровья
-            document.getElementById('health-fill').style.width = percentage + '%';
+            document.getElementById('health-fill').style.width = progressPercentage + '%';
         }
 
         // Обновляем отображение времени
