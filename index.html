@@ -51,38 +51,32 @@
         const now = new Date();
         const currentHour = now.getHours();
         const currentMinute = now.getMinutes();
-        const totalMinutesSinceMidnight = currentHour * 60 + currentMinute;
+        const totalMinutes = currentHour * 60 + currentMinute; // текущее время в минутах
         
-        const endHour = 19; // Время окончания
-        const endMinute = 0;
-        const totalMinutesToEnd = endHour * 60 + endMinute; // Время до 19:00 в минутах
+        const minutesToEndOfDay = (19 * 60); // 19:00 в минутах
+        const minutesSinceMidnight = (currentHour * 60) + currentMinute; // общее время с начала дня в минутах
         
-        // Если текущее время больше или равно 19:00, ставим 100%
-        if (totalMinutesSinceMidnight >= totalMinutesToEnd) {
+        // Если уже после 19:00, то ставим 100%
+        if (minutesSinceMidnight >= minutesToEndOfDay) {
             document.getElementById('health-fill').style.width = '100%';
-            document.getElementById('time-display').innerText = "19:00 - Время вышло!";
         } else {
-            // Рассчитываем оставшееся время до 19:00
-            const remainingMinutes = totalMinutesToEnd - totalMinutesSinceMidnight;
-            const remainingHours = Math.floor(remainingMinutes / 60);
-            const remainingMinutesDisplay = remainingMinutes % 60;
-
-            // Рассчитываем процент заполнения
-            const progressPercentage = (totalMinutesSinceMidnight / totalMinutesToEnd) * 100;
+            // Остаток времени до 19:00
+            const remainingMinutes = minutesToEndOfDay - minutesSinceMidnight;
+            
+            // Рассчитываем, сколько времени прошло с начала отсчета (текущее время)
+            const progressPercentage = Math.max(0, (1 - (remainingMinutes / (minutesToEndOfDay - totalMinutes))) * 100);
+            
+            // Обновляем ширину полоски здоровья
             document.getElementById('health-fill').style.width = progressPercentage + '%';
-
-            // Обновляем отображение оставшегося времени
-            document.getElementById('time-display').innerText = 
-                `Осталось: ${remainingHours}ч ${remainingMinutesDisplay}мин`;
         }
 
-        // Обновляем время отображения
-        document.getElementById('time-display').innerText += ` | Текущее время: ${now.toLocaleTimeString()}`;
+        // Обновляем отображение времени
+        document.getElementById('time-display').innerText = now.toLocaleTimeString();
     }
     
     // Немедленная инициализация при загрузке страницы
     updateHealthBar();
-    // Обновляем полоску каждые 60 секунд
+    // Обновляем полоску каждые 1 секунд
     setInterval(updateHealthBar, 1000);
 </script>
 
