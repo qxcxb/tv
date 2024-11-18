@@ -56,15 +56,23 @@
         // Устанавливаем общее количество минут до 19:00
         const minutesToEndOfDay = (19 * 60); // 19:00
         const totalDayMinutes = 24 * 60; // Общее количество минут в дне
-        
-        // Теперь вычисляем оставшееся время до 19:00
-        const remainingMinutes = Math.max(0, minutesToEndOfDay - totalMinutes);
 
-        // Рассчитываем процент заполнения
-        const percentage = (remainingMinutes / minutesToEndOfDay) * 100;
+        // Рассчитываем общее время (с 00:00) до 19:00
+        const minutesSinceStartOfDay = currentHour * 60 + currentMinute;
 
-        // Обновляем ширину полоски здоровья
-        document.getElementById('health-fill').style.width = percentage + '%';
+        // Если прошло больше времени чем до 19:00, то устанавливаем 100%
+        if (minutesSinceStartOfDay >= minutesToEndOfDay) {
+            document.getElementById('health-fill').style.width = '100%';
+        } else {
+            // Рассчитываем оставшееся время до 19:00
+            const remainingMinutes = minutesToEndOfDay - minutesSinceStartOfDay;
+
+            // Рассчитываем процент заполнения, начиная с текущего времени
+            const percentage = (1 - (remainingMinutes / minutesToEndOfDay)) * 100;
+            
+            // Обновляем ширину полоски здоровья
+            document.getElementById('health-fill').style.width = percentage + '%';
+        }
 
         // Обновляем отображение времени
         document.getElementById('time-display').innerText = now.toLocaleTimeString();
