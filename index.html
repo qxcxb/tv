@@ -47,25 +47,27 @@
 
 <script>
     function updateHealthBar() {
-        const now = new Date();
-        const currentHour = now.getHours();
-        const currentMinute = now.getMinutes();
-        const totalMinutes = currentHour * 60 + currentMinute; // текущее время в минутах
+        const now = new Date(); // Получаем текущее время
+        const currentHour = now.getHours(); // Часы
+        const currentMinute = now.getMinutes(); // Минуты
+        const totalMinutes = currentHour * 60 + currentMinute; // Общее количество минут с начала дня до текущего времени
         
-        const minutesToEndOfDay = (19 * 60); // 19:00 в минутах
-        const currentMinutesFromStart = totalMinutes; // текущее время относительно начала дня
-
-        // Если текущее время после 19:00, ставим 100%
-        if (currentMinutesFromStart >= minutesToEndOfDay) {
+        const minutesToEndOfDay = (19 * 60); // Общее количество минут до 19:00
+        
+        if (totalMinutes >= minutesToEndOfDay) {
+            // Если время уже после 19:00, то устанавливаем 100%
             document.getElementById('health-fill').style.width = '100%';
         } else {
-            // Расчет процента заполнения
-            const remainingMinutes = minutesToEndOfDay - currentMinutesFromStart;
-            const elapsedPercentage = (1 - (remainingMinutes / (minutesToEndOfDay - (0)))) * 100; // текущее время = 0%
+            // Если все еще до 19:00, то рассчитываем остаток
+            const remainingMinutes = minutesToEndOfDay - totalMinutes; // Остаток времени до 19:00
+        
+            // Рассчитываем процент от (текущие минуты) до (19:00)
+            const progressPercentage = (1 - (remainingMinutes / (minutesToEndOfDay - totalMinutes))) * 100;
             
-            // Обновляем ширину полоски здоровья
-            document.getElementById('health-fill').style.width = elapsedPercentage + '%';
+            // Устанавливаем ширину полоски здоровья в процентах
+            document.getElementById('health-fill').style.width = progressPercentage + '%';
         }
+
 
         // Обновляем отображение времени
         document.getElementById('time-display').innerText = now.toLocaleTimeString();
