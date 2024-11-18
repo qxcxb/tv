@@ -53,20 +53,18 @@
         const totalMinutes = currentHour * 60 + currentMinute; // текущее время в минутах
         
         const minutesToEndOfDay = (19 * 60); // 19:00 в минутах
-        const minutesSinceMidnight = (currentHour * 60) + currentMinute; // общее время с начала дня в минутах
-        
-        // Если уже после 19:00, то ставим 100%
-        if (minutesSinceMidnight >= minutesToEndOfDay) {
+        const currentMinutesFromStart = totalMinutes; // текущее время относительно начала дня
+
+        // Если текущее время после 19:00, ставим 100%
+        if (currentMinutesFromStart >= minutesToEndOfDay) {
             document.getElementById('health-fill').style.width = '100%';
         } else {
-            // Остаток времени до 19:00
-            const remainingMinutes = minutesToEndOfDay - minutesSinceMidnight;
-            
-            // Рассчитываем, сколько времени прошло с начала отсчета (текущее время)
-            const progressPercentage = Math.max(0, (1 - (remainingMinutes / (minutesToEndOfDay - totalMinutes))) * 100);
+            // Расчет процента заполнения
+            const remainingMinutes = minutesToEndOfDay - currentMinutesFromStart;
+            const elapsedPercentage = (1 - (remainingMinutes / (minutesToEndOfDay - (0)))) * 100; // текущее время = 0%
             
             // Обновляем ширину полоски здоровья
-            document.getElementById('health-fill').style.width = progressPercentage + '%';
+            document.getElementById('health-fill').style.width = elapsedPercentage + '%';
         }
 
         // Обновляем отображение времени
@@ -75,7 +73,7 @@
     
     // Немедленная инициализация при загрузке страницы
     updateHealthBar();
-    // Обновляем полоску каждые 1 секунд
+    // Обновляем полоску каждую секунду
     setInterval(updateHealthBar, 1000);
 </script>
 
